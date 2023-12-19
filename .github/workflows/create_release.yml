@@ -1,0 +1,119 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up and build with NeutralinoJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - run: npm install -g @neutralinojs/neu
+      - run: neu build --release
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: varh-app-linux
+          path: |
+            dist/varh-app/varh-app-linux_arm64
+            dist/varh-app/varh-app-linux_x64
+            dist/varh-app/varh-app-linux_armhf
+            resources.neu
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: varh-app-windows
+          path: |
+            dist/varh-app/varh-app-windows_x64.exe
+            resources.neu
+
+      - name: Upload MacOS Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: varh-app-macos
+          path: |
+            dist/varh-app/varh-app-mac_x64
+            dist/varh-app/varh-app-mac_arm64
+            dist/varh-app/varh-app-mac_universal
+            resources.neu
+
+  create_release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set Release Version
+        run: |
+          version=$(jq -r '.version' neutralino.config.json)
+          echo "::set-env name=RELEASE_VERSION::$version"
+
+      - name: Download Linux Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: varh-app-linux
+          path: linux
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: varh-app-windows
+          path: windows
+
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: varh-app-macos
+          path: macos
+
+      - name: Zip Artifacts
+        run: |
+          zip -r linux.zip linux
+          zip -r windows.zip windows
+          zip -r macos.zip macos
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: Release ${{ env.RELEASE_VERSION }}
+          body: |
+            This is the release for version ${{ env.RELEASE_VERSION }}.
+          draft: false
+          prerelease: false
+
+      - name: Attach Linux Artifacts
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: linux.zip
+          asset_name: varh-app-linux.zip
+          asset_content_type: application/zip
+
+      - name: Attach Windows Artifacts
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: windows.zip
+          asset_name: varh-app-windows.zip
+          asset_content_type: application/zip
+
+      - name: Attach macOS Artifacts
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: macos.zip
+          asset_name: varh-app-macos.zip
+          asset_content_type: application/zip
