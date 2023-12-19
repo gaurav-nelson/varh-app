@@ -13,11 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check folder
-        run: |
-          pwd
-          ls -la
-
       - name: Set up and build with NeutralinoJS
         uses: actions/setup-node@v3
         with:
@@ -25,32 +20,38 @@ jobs:
       - run: npm install -g @neutralinojs/neu
       - run: neu build --release
 
+      - name: Check dist folder
+        run: |
+          pwd
+          ls -la
+          ls -R dist/
+
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: varh-app-linux
           if-no-files-found: error
           path: |
-            dist/varh-app/varh-app-linux_arm64
-            dist/varh-app/varh-app-linux_x64
-            dist/varh-app/varh-app-linux_armhf
-            resources.neu
+            ./dist/varh-app/varh-app-linux_arm64
+            ./dist/varh-app/varh-app-linux_x64
+            ./dist/varh-app/varh-app-linux_armhf
+            ./dist/varh-app/resources.neu
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: varh-app-windows
           path: |
-            dist/varh-app/varh-app-windows_x64.exe
-            resources.neu
+            ./dist/varh-app/varh-app-windows_x64.exe
+            ./dist/varh-app/resources.neu
 
       - name: Upload MacOS Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: varh-app-macos
           path: |
-            dist/varh-app/varh-app-mac_x64
-            dist/varh-app/varh-app-mac_arm64
-            dist/varh-app/varh-app-mac_universal
-            resources.neu
+            ./dist/varh-app/varh-app-mac_x64
+            ./dist/varh-app/varh-app-mac_arm64
+            ./dist/varh-app/varh-app-mac_universal
+            ./dist/varh-app/resources.neu
 
