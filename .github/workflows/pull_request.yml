@@ -18,3 +18,39 @@ jobs:
           pwd
           ls -la
 
+      - name: Set up and build with NeutralinoJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - run: npm install -g @neutralinojs/neu
+      - run: neu build --release
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: varh-app-linux
+          if-no-files-found: error
+          path: |
+            dist/varh-app/varh-app-linux_arm64
+            dist/varh-app/varh-app-linux_x64
+            dist/varh-app/varh-app-linux_armhf
+            resources.neu
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: varh-app-windows
+          path: |
+            dist/varh-app/varh-app-windows_x64.exe
+            resources.neu
+
+      - name: Upload MacOS Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: varh-app-macos
+          path: |
+            dist/varh-app/varh-app-mac_x64
+            dist/varh-app/varh-app-mac_arm64
+            dist/varh-app/varh-app-mac_universal
+            resources.neu
+

@@ -13,11 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: File structure
-        run: |
-        pwd
-        ls -la
-
       - name: Set up and build with NeutralinoJS
         uses: actions/setup-node@v3
         with:
