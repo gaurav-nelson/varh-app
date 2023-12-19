@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: File structure
+        run: |
+        pwd
+        ls -la
+
       - name: Set up and build with NeutralinoJS
         uses: actions/setup-node@v3
         with:
@@ -24,6 +29,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: varh-app-linux
+          if-no-files-found: error
           path: |
             dist/varh-app/varh-app-linux_arm64
             dist/varh-app/varh-app-linux_x64
