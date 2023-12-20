@@ -23,11 +23,14 @@ jobs:
       - run: npm install -g @neutralinojs/neu
       - run: neu build --release
 
-      - name: Zip Artifacts
+      - name: Set permissions and create zip files
         run: |
-          zip -r linux.zip ./dist/varh-app/varh-app-linux_arm64 ./dist/varh-app/varh-app-linux_x64 ./dist/varh-app/varh-app-linux_armhf ./dist/varh-app/resources.neu
-          zip -r windows.zip ./dist/varh-app/varh-app-win_x64.exe ./dist/varh-app/resources.neu
-          zip -r macos.zip ./dist/varh-app/varh-app-mac_x64 ./dist/varh-app/varh-app-mac_arm64 ./dist/varh-app/varh-app-mac_universal ./dist/varh-app/resources.neu
+          find ./dist/varh-app/varh-app-mac* -type f -exec xattr -c {} \;
+          find ./dist/varh-app -type f ! -name 'resources.neu' ! -name 'varh-app-win_x64.exe' -exec chmod +x {} \;
+          cd ./dist/varh-app
+          zip -r ../../linux.zip ./varh-app-linux_arm64 ./varh-app-linux_x64 ./varh-app-linux_armhf ./resources.neu
+          zip -r ../../windows.zip ./varh-app-win_x64.exe ./resources.neu
+          zip -r ../../macos.zip ./varh-app-mac_x64 ./varh-app-mac_arm64 ./varh-app-mac_universal ./resources.neu
 
       - name: Set Release Version
         run: |

@@ -30,12 +30,19 @@ async function onTrayMenuItemClicked(event) {
         const docsDir = await Neutralino.storage.getData("docsDir");
         if (docsDir) {
           document.getElementById("loadingScreen").classList.remove("invisible");
-          await Neutralino.os.execCommand(`cd ${docsDir} && vale sync`);
-          document.getElementById("loadingScreen").classList.add("invisible");
-          Neutralino.os.showMessageBox(
-            "Sync Vale rules",
-            `Vale rules synced successfully!`
-          );
+          try {
+            await Neutralino.os.execCommand(`cd ${docsDir} && vale sync`);
+            document.getElementById("loadingScreen").classList.add("invisible");
+            Neutralino.os.showMessageBox(
+              "Sync Vale rules",
+              `Vale rules synced successfully!`
+            );
+          } catch (error) {
+            Neutralino.os.showMessageBox(
+              "Error",
+              `Failed to sync Vale rules: ${error.message}`
+            );
+          }
         }
       } catch (error) {
         if (
@@ -69,6 +76,11 @@ async function getVersion() {
   return valeVersion.stdOut;
 }
 
+async function getAsciiDoctorVersion() {
+  let asciidoctorVersion = await Neutralino.os.execCommand("asciidoctor --version");
+  return asciidoctorVersion.stdOut;
+}
+
 Neutralino.events.on("ready", async () => {
   try {
     let version = await getVersion();
@@ -76,6 +88,15 @@ Neutralino.events.on("ready", async () => {
     if (!version.includes("vale version")) {
       sendAlertMsg(
         "Cannot find Vale! You must install Vale and add it to your path.",
+        "X",
+        "error"
+      );
+    }
+    let asciidoctorVersion = await getAsciiDoctorVersion();
+    console.log(asciidoctorVersion);
+    if (!asciidoctorVersion.includes("[https://asciidoctor.org]")) {
+      sendAlertMsg(
+        "Cannot find Asciidoctor! You must install Asciidoctor and add it to your path.",
         "X",
         "error"
       );
