@@ -28,5 +28,5 @@ You must have the following applications installed on your system:
 
 ## Other features
 - Click `Clear` to clear the editor.
-- Click on the tray and select `Vale sync` to sync your local vale rules with the latest vale-at-red-hat rules.
+- Click on the tray icon and select `Vale sync` to sync your local vale rules with the latest vale-at-red-hat rules.
 - Click on the `sun` or `moon` icon to toggle between light and dark mode.
