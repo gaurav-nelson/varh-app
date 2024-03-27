@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="assets/index-c63f77ff.css" />
     <link rel="stylesheet" href="assets/codemirror.min.css" />
     <link rel="stylesheet" href="assets/material.css" />
-    <!-- Analytics -->
-    <script async src="https://cloud.umami.is/script.js" data-website-id="a7cbf0f1-a6c2-4271-a115-cef56b255995"></script>
   </head>
   <body class="h-screen">
     <div data-theme="dark" class="navbar base-300">
@@ -23,7 +21,7 @@
           data-tip="Click to select your openshift-docs directory."
         >
           <div class="join bg-error">
-            <button id="configFileBtn" data-umami-event="Config folder button" class="btn btn-outline join-item">
+            <button id="configFileBtn" class="btn btn-outline join-item">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="fill-current w-6 h-6"
@@ -75,7 +73,7 @@
             />
           </svg>
         </label>
-        <button id="clear-btn" data-umami-event="Clear button" class="btn btn-ghost">Clear</button>
+        <button id="clear-btn" class="btn btn-ghost">Clear</button>
         <button
           id="lint-btn"
           data-umami-event="Lint button"
@@ -113,7 +111,7 @@
         </svg>
         <span id="alert-msg">Alert!</span>
         <div>
-          <button id="alert-btn" data-umami-event="Alert button" class="btn btn-sm btn-outline btn-warning">
+          <button id="alert-btn" class="btn btn-sm btn-outline btn-warning">
             X
           </button>
         </div>
