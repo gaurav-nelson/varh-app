@@ -5,6 +5,8 @@
 # varh-app
 Desktop app for linting your AsciiDoc files with [vale-at-red-hat](https://github.com/redhat-documentation/vale-at-red-hat).
 
+<img src="https://neutralino.js.org/img/apps/varh-app-demo.gif">
+
 ## Pre-requisites
 You must have the following applications installed on your system:
 - [Asciidoctor](https://asciidoctor.org/)
