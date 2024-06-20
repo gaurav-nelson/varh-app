@@ -1,0 +1,7 @@
+{
+    "applicationId": "com.vale-at-red-hat.app",
+    "version": "1.0.4",
+    "resourcesURL": "https://raw.githubusercontent.com/gaurav-nelson/varh-app/main/update/updated_resources.neu",
+    "data": {
+    }
+}

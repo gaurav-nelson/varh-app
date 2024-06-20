@@ -1,4 +1,4 @@
-// Type definitions for Neutralino 5.1.0
+// Type definitions for Neutralino 5.2.0
 // Project: https://github.com/neutralinojs
 // Definitions project: https://github.com/neutralinojs/neutralino.js
 
@@ -34,6 +34,11 @@ namespace filesystem {
         id: number;
         path: string;
     }
+    interface CopyOptions {
+        recursive: boolean;
+        overwrite: boolean;
+        skip: boolean;
+    }
     function createDirectory(path: string): Promise<void>;
     function remove(path: string): Promise<void>;
     function writeFile(path: string, data: string): Promise<void>;
@@ -49,7 +54,7 @@ namespace filesystem {
     function updateOpenedFile(id: number, event: string, data?: any): Promise<void>;
     function getOpenedFileInfo(id: number): Promise<OpenedFile>;
     function readDirectory(path: string, options?: DirectoryReaderOptions): Promise<DirectoryEntry[]>;
-    function copy(source: string, destination: string): Promise<void>;
+    function copy(source: string, destination: string, options?: CopyOptions): Promise<void>;
     function move(source: string, destination: string): Promise<void>;
     function getStats(path: string): Promise<Stats>;
 }
@@ -544,6 +549,11 @@ interface Stats {
 interface Watcher {
     id: number;
     path: string;
+}
+interface CopyOptions {
+    recursive: boolean;
+    overwrite: boolean;
+    skip: boolean;
 }
 interface ExecCommandOptions {
     stdIn?: string;
