@@ -19,7 +19,7 @@ async function onTrayMenuItemClicked(event) {
   switch (event.detail.id) {
     case "UPDATE":
       try {
-        let url = "https://raw.githubusercontent.com/gaurav-nelson/varh-app/main/update-mainifest.json";
+        let url = "https://raw.githubusercontent.com/gaurav-nelson/varh-app/main/update-manifest.json";
         let manifest = await Neutralino.updater.checkForUpdates(url);
         if (manifest.version != NL_APPVERSION) {
           let message = `A new version of the application is available: ${manifest.version}. The application will restart after the update. Do you want to update? `;
