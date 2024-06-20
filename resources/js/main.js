@@ -7,6 +7,7 @@ function setTray() {
     icon: "/resources/icons/trayIcon.png",
     menuItems: [
       { id: "SYNC", text: "Sync Vale rules" },
+      { id: "UPDATE", text: "Check for updates" },
       { id: "SEP", text: "-" },
       { id: "QUIT", text: "Quit" },
     ],
@@ -16,11 +17,29 @@ function setTray() {
 
 async function onTrayMenuItemClicked(event) {
   switch (event.detail.id) {
-    case "VERSION":
-      Neutralino.os.showMessageBox(
-        "Version information",
-        `Neutralinojs server: v${NL_VERSION} | Neutralinojs client: v${NL_CVERSION}`
-      );
+    case "UPDATE":
+      try {
+        let url = "https://raw.githubusercontent.com/gaurav-nelson/varh-app/main/update-mainifest.json";
+        let manifest = await Neutralino.updater.checkForUpdates(url);
+        if (manifest.version != NL_APPVERSION) {
+          let message = `A new version of the application is available: ${manifest.version}. The application will restart after the update. Do you want to update? `;
+          //await Neutralino.os.showMessageBox("Update available", message);
+          let button = await Neutralino.os
+            .showMessageBox('Update available!', message, 'YES_NO', 'QUESTION');
+          if (button == 'YES') {
+            await Neutralino.updater.install();
+            await Neutralino.app.restartProcess();
+          }
+        }
+        else {
+          await Neutralino.os.showMessageBox("No new updates", "You are already using the latest version of the application.");
+        }
+      } catch (err) {
+        Neutralino.os.showMessageBox(
+          "Error: Update failed",
+          `An error occurred while updating the application: ${JSON.stringify(err)}`
+        );
+      }
       break;
     case "QUIT":
       Neutralino.app.exit();
@@ -29,7 +48,9 @@ async function onTrayMenuItemClicked(event) {
       try {
         const docsDir = await Neutralino.storage.getData("docsDir");
         if (docsDir) {
-          document.getElementById("loadingScreen").classList.remove("invisible");
+          document
+            .getElementById("loadingScreen")
+            .classList.remove("invisible");
           try {
             await Neutralino.os.execCommand(`cd ${docsDir} && vale sync`);
             document.getElementById("loadingScreen").classList.add("invisible");
@@ -77,7 +98,9 @@ async function getVersion() {
 }
 
 async function getAsciiDoctorVersion() {
-  let asciidoctorVersion = await Neutralino.os.execCommand("asciidoctor --version");
+  let asciidoctorVersion = await Neutralino.os.execCommand(
+    "asciidoctor --version"
+  );
   return asciidoctorVersion.stdOut;
 }
 
@@ -108,22 +131,24 @@ Neutralino.events.on("ready", async () => {
 
 function sendAlertMsg(alertMsg, btnText, alertType) {
   // Get elements
-  let alertContainer = document.getElementById('alert-container');
-  let alertElement = document.getElementById('alert');
-  let alertBtn = document.getElementById('alert-btn');
-  let alertMsgElement = document.getElementById('alert-msg');
-  let alertSvg = document.getElementById('alert-svg');
+  let alertContainer = document.getElementById("alert-container");
+  let alertElement = document.getElementById("alert");
+  let alertBtn = document.getElementById("alert-btn");
+  let alertMsgElement = document.getElementById("alert-msg");
+  let alertSvg = document.getElementById("alert-svg");
 
   // Update text
   alertMsgElement.textContent = alertMsg;
   alertBtn.textContent = btnText;
 
   // Update classes
-  ['border-success', 'border-warning', 'border-info', 'border-error'].forEach(cls => {
+  ["border-success", "border-warning", "border-info", "border-error"].forEach(
+    (cls) => {
       alertElement.classList.remove(cls);
-      alertBtn.classList.remove(cls.replace('border', 'btn'));
-      alertSvg.classList.remove(cls.replace('border', 'stroke'));
-  });
+      alertBtn.classList.remove(cls.replace("border", "btn"));
+      alertSvg.classList.remove(cls.replace("border", "stroke"));
+    }
+  );
 
   alertElement.classList.add(`border-${alertType}`);
   alertBtn.classList.add(`btn-${alertType}`);
@@ -376,7 +401,7 @@ var widgetsError = [];
 var widgetsWarning = [];
 var widgetsSuggestion = [];
 
-async function lintAdoc(req,configPath) {
+async function lintAdoc(req, configPath) {
   if (req.textarea == "" || req.textarea == null) {
     console.log("Textarea is empty");
     sendAlertMsg(
@@ -419,15 +444,11 @@ document.getElementById("lint-btn").addEventListener("click", async () => {
     `${docsDir}/.vale.ini`
   );
   //console.log("Vale lint: ", JSON.stringify(valeLint));
-  if (valeLint){
+  if (valeLint) {
     if (!Object.keys(valeLint).length) {
       //console.log("Response data: ", data);
       console.log("Hooray, no errors!");
-      sendAlertMsg(
-        "Hooray, no errors!",
-        "X",
-        "success"
-      );
+      sendAlertMsg("Hooray, no errors!", "X", "success");
     } else {
       highlightResults(valeLint["stdin.adoc"]);
       updateCounts();
@@ -558,12 +579,17 @@ function updateCounts() {
   const suggestionCount = widgetsSuggestion.length;
   const suggestionText = suggestionCount === 1 ? "Suggestion" : "Suggestions";
 
-  document.getElementById("errorCount").textContent = `${errorCount} ${errorText}`;
-  document.getElementById("warningCount").textContent = `${warningCount} ${warningText}`;
-  document.getElementById("suggestionCount").textContent = `${suggestionCount} ${suggestionText}`;
+  document.getElementById(
+    "errorCount"
+  ).textContent = `${errorCount} ${errorText}`;
+  document.getElementById(
+    "warningCount"
+  ).textContent = `${warningCount} ${warningText}`;
+  document.getElementById(
+    "suggestionCount"
+  ).textContent = `${suggestionCount} ${suggestionText}`;
   document.getElementById("output").classList.remove("invisible");
 }
-
 
 function clearCountsMarksWidgets() {
   markers = [];
@@ -590,7 +616,11 @@ function clearWidgetsMarkers(callback) {
 
   const currentText = editor.getValue();
 
-  if (widgetsError.length !== 0 || widgetsWarning.length !== 0 || widgetsSuggestion.length !== 0) {
+  if (
+    widgetsError.length !== 0 ||
+    widgetsWarning.length !== 0 ||
+    widgetsSuggestion.length !== 0
+  ) {
     clearWidgets(widgetsError);
     clearWidgets(widgetsWarning);
     clearWidgets(widgetsSuggestion);
@@ -604,3 +634,7 @@ function clearWidgetsMarkers(callback) {
 
   callback();
 }
+
+document.getElementById("output").addEventListener("click", function () {
+  this.classList.toggle("minimized");
+});

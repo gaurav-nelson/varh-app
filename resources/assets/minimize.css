@@ -1,0 +1,12 @@
+#output {
+  transition: transform 0.3s ease-in-out, bottom 0.3s ease-in-out,
+    right 0.3s ease-in-out;
+  position: absolute;
+  transform-origin: bottom right;
+}
+
+.minimized {
+  transform: scale(0.3);
+  transform-origin: bottom right;
+  filter: sepia(50%) saturate(300%) brightness(70%);
+}
